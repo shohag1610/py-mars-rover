@@ -9,8 +9,7 @@ class PlateauSize:
 
 
 @dataclass
-class Position:
+class RoverPosition:
     x: int
     y: int
     direction: CompassDirection
-
