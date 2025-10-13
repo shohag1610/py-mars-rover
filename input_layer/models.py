@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from enums import CompassDirection
+from input_layer.enums import CompassDirection
 
 
 @dataclass

@@ -1,8 +1,8 @@
 import pytest
 
 from input_layer.input_parser import InputParser
-from enums import Instruction, CompassDirection
-from models import PlateauSize, RoverPosition
+from input_layer.enums import Instruction, CompassDirection
+from input_layer.models import PlateauSize, RoverPosition
 
 #plateau size
 def test_parse_plateau_size_empty():

@@ -1,5 +1,5 @@
-from enums import Instruction, CompassDirection
-from models import PlateauSize, RoverPosition
+from input_layer.enums import Instruction, CompassDirection
+from input_layer.models import PlateauSize, RoverPosition
 
 class InputParser:
 
