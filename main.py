@@ -3,6 +3,7 @@ from input_layer.input_parser import InputParser
 from logic_layer.rover import Rover
 from logic_layer.plateau import Plateau
 from input_layer.enums import CompassDirection, Instruction
+from logic_layer.enums import AddRoverResult, MoveResult
 
 def main():
     plateau_str = "5 5"
@@ -20,8 +21,12 @@ def main():
     
     
     plateau = Plateau(5,5)
-    rover = Rover(1, 2, CompassDirection.NORTH, plateau)
-    plateau.add_rover(rover)
+    rover = Rover(3, 2, CompassDirection.NORTH, plateau)
+    result = plateau.add_rover(rover)
+    
+    if result != AddRoverResult.SUCCESS:
+        print(f"Could not add rover: {result}")
+        return
 
     instruction_str = "LMLMLMMM"
 
@@ -29,10 +34,15 @@ def main():
     instructions = InputParser.parse_instructions(instruction_str)
 
     # The logic layer executes typed data
-    rover.execute_instructions(instructions)
+    result = rover.execute_instructions(instructions)
+    
+    if result == MoveResult.OUT_OF_BOUNDS:
+        print(f"Could not move, out of surface!: {result}")
+        return
+        
 
     print("Final rover position:", rover.position)
-
+    
 
 if __name__ == "__main__":
     main()

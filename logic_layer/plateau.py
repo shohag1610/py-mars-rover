@@ -1,5 +1,6 @@
 from input_layer.models import PlateauSize, RoverPosition
 from logic_layer.rover import Rover
+from logic_layer.enums import AddRoverResult
 
 class Plateau:
     def __init__(self, width: int, height: int):
@@ -16,12 +17,14 @@ class Plateau:
                 return False
         return True
 
-    def add_rover(self, rover) -> None:
+    def add_rover(self, rover: Rover) -> AddRoverResult:
+        
         if not self.is_within_bounds(rover.position):
-            raise ValueError(f"Rover position {rover.position} is out of bounds.")
+            return AddRoverResult.OUT_OF_BOUNDS
 
         if not self.is_position_free(rover.position):
-            raise ValueError(f"Position {rover.position} is already occupied by another rover.")
+            return AddRoverResult.CRASH_INTO_ROVER
 
         self.rovers.append(rover)
-    
+        return AddRoverResult.SUCCESS
+

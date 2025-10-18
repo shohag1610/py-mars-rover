@@ -1,11 +1,16 @@
 from input_layer.models import RoverPosition
 from input_layer.enums import CompassDirection, Instruction
+from logic_layer.rotation import Rotation
+from logic_layer.movement import Movement
+from logic_layer.enums import MoveResult
+
+
 
 class Rover:
-    def __init__(self, x:int, y:int, facing: CompassDirection, plateau = None):
+    def __init__(self, x: int, y: int, facing: CompassDirection, plateau=None):
         self.position = RoverPosition(x, y, facing)
         self.plateau = plateau
-        
+
     @property
     def facing(self) -> CompassDirection:
         return self.position.direction
@@ -13,54 +18,29 @@ class Rover:
     @facing.setter
     def facing(self, new_direction: CompassDirection):
         self.position.direction = new_direction
-        
+
     def turn_left(self):
-        directions = [
-            CompassDirection.NORTH,
-            CompassDirection.WEST,
-            CompassDirection.SOUTH,
-            CompassDirection.EAST,
-        ]
-        index = directions.index(self.facing)
-        self.facing = directions[(index + 1) % len(directions)]
+        self.facing = Rotation.turn_left(self.facing)
 
     def turn_right(self):
-        directions = [
-            CompassDirection.NORTH,
-            CompassDirection.EAST,
-            CompassDirection.SOUTH,
-            CompassDirection.WEST,
-        ]
-        index = directions.index(self.facing)
-        self.facing = directions[(index + 1) % len(directions)]
+        self.facing = Rotation.turn_right(self.facing)
 
-    # --------------------
-    # Movement Logic
-    # --------------------
-    def move_forward(self):
-        dx, dy = 0, 0
-        if self.facing == CompassDirection.NORTH:
-            dy = 1
-        elif self.facing == CompassDirection.SOUTH:
-            dy = -1
-        elif self.facing == CompassDirection.EAST:
-            dx = 1
-        elif self.facing == CompassDirection.WEST:
-            dx = -1
+    def move_forward(self) -> MoveResult:
+        new_position = Movement.move_forward(self.position)
 
-        new_position = RoverPosition(
-            self.position.x + dx, self.position.y + dy, self.facing
-        )
+        if self.plateau and not self.plateau.is_within_bounds(new_position):
+            return MoveResult.OUT_OF_BOUNDS
 
-        # Move successful
         self.position = new_position
+        return MoveResult.SUCCESS
 
     def execute_instructions(self, instructions: list[Instruction]):
-        """Iterate through instructions and execute them in order."""
         for instruction in instructions:
             if instruction == Instruction.LEFT:
                 self.turn_left()
             elif instruction == Instruction.RIGHT:
                 self.turn_right()
             elif instruction == Instruction.MOVE:
-                self.move_forward()
+                result = self.move_forward()
+                if result == MoveResult.OUT_OF_BOUNDS:
+                    return MoveResult.OUT_OF_BOUNDS
